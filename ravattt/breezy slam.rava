@@ -1,0 +1,32 @@
+thread "BreezySLAM" {
+    namespace: "SLAMNamespace"
+
+    senses {
+        "LidarSensor": "captures laser scan data for SLAM"
+    }
+
+    actions {
+        "InitializeSLAM" {
+            requires: ["LidarSensor"]
+        }
+        "UpdateSLAM" {
+            requires: ["LidarSensor"]
+        }
+        "RetrieveMap" {
+            requires: ["LidarSensor"]
+        }
+    }
+
+    events {
+        "NewScanAvailable" {
+            triggeredBy: "LidarSensor"
+            action: "UpdateSLAM"
+        }
+    }
+
+    state "SLAMProcess" {
+        from: "Idle"
+        to: "Mapping"
+        actions: ["InitializeSLAM", "UpdateSLAM", "RetrieveMap"]
+    }
+}
